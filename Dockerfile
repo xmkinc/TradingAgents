@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 # 复制依赖文件
 COPY requirements.txt .
 
-# 安装 Python 依赖
+# 安装 Python 依赖（含 streamlit 和 python-dotenv）
 RUN pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir streamlit python-dotenv
 
@@ -27,10 +27,7 @@ RUN mkdir -p /app/results /app/tradingagents/dataflows/data_cache
 ENV PYTHONUNBUFFERED=1
 ENV TRADINGAGENTS_RESULTS_DIR=/app/results
 
-# 暴露端口
-EXPOSE 8501
-
-# 启动命令
+# 启动脚本：Railway 会注入 $PORT，Streamlit 必须监听该端口
 CMD streamlit run app.py \
     --server.port=${PORT:-8501} \
     --server.address=0.0.0.0 \
